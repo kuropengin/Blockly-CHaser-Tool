@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Blockly CHaser Tool</title>
+  <link rel='stylesheet' href='../src/css/style.css' />
+  <link rel='stylesheet' href='../src/css/menu.css' />
+  <link rel='stylesheet' href='../src/css/create.css' />
+  <link rel='stylesheet' href='../src/css/animation.css' />
+</head>
+<body>
+  
+  <div class="header">
+    
+    <div class = "back_page">
+      
+    </div>
+    <div class="control_area">
+      <div class = "page_title">
+        <h1><span class = "page_title_span">Blockly CHaser Tool</span>ゲームサーバー作成</h1>
+      </div>
+    </div>  
+    
+  </div>
+  
+  <div class="content">
+    <div class="side">
+      <ul>
+        <li>ホーム<a href="../Blockly_CHaser_Tool.html"></a></li>
+        <li>ゲームサーバー作成<a href="./game_server.html"></a></li>
+        <li>チュートリアル作成<a href="./tutorial_stage.html"></a></li>
+      </ul>
+    </div>
+    <div class="main">
+      <div class="category">
+        <div class="option_content">
+          <div class="option_title">サーバー名</div>
+          <div class="option_input"><input type="text" id="name" class="option_input_text" maxlength="20"></div>
+        </div>
+        <div class="option_content">
+          <div class="option_title">サーバーID</div>
+          <div class="option_input"><input type="text" id="room_id" class="option_input_text" maxlength="20" placeholder="半角英数字"></div>
+        </div>
+      </div>
+      
+      <div class="category">
+         <div class="option_content">
+           <div class="option_title">マップタイプ</div>
+           <div class="option_radio">
+             <input id="manual" type="radio" name="map_option" value="manual" checked><label class="tab_item" for="manual" onclick="clickManual()">固定</label>
+             <input id="auto" type="radio" name="map_option" value="auto"><label class="tab_item" for="auto" onclick="clickAuto()">自動生成</label>
+           </div>
+         </div>
+         <div id="map_manual_option">
+           <div class="option_content">
+             <div id="create_map"></div>
+             <div class="map_item_select">
+               <div id="no_item" class="map_item_button"></div>
+               <div id="block_item" class="map_item_button wall_img"></div>
+               <div id="hart_item" class="map_item_button hart_img"></div>
+               <div id="cool_item" class="map_item_button cool_img"></div>
+               <div id="hot_item" class="map_item_button hot_img"></div>
+               <div class="option_checkbox">
+                 <input id="manual_symmetry" type="checkbox" name="manual_symmetry_option" value="symmetry" checked><label class="tab_item" for="manual_symmetry">対称設置</label>
+               </div>
+             </div>
+           </div>
+         </div>
+         <div id="map_auto_option" class="display_off" >
+           <div class="option_content">
+             <div class="option_title">生成モード</div>
+             <div class="option_radio">
+               <input id="symmetry" type="radio" name="symmetry_option" value="symmetry" checked><label class="tab_item" for="symmetry">対称</label>
+               <input id="random" type="radio" name="symmetry_option" value="random"><label class="tab_item" for="random">ランダム</label>
+             </div>
+           </div>
+           <div class="option_content">
+             <div class="option_title">アイテム数(奇数)</div>
+             <div class="option_input">
+               <input id="item_number" class="option_input_text" type="number" min="1" step="2" value="17">
+             </div>
+           </div>
+           <div class="option_content">
+             <div class="option_title">ブロック数(偶数)</div>
+             <div class="option_input">
+               <input id="block_number" class="option_input_text" type="number" min="0" step="2" value="14">
+             </div>
+           </div>
+         </div>
+         <script>
+           function checkFormID(){
+             
+             var str=document.getElementById("room_id").value;
+             while(str.match(/[^A-Z^a-z\d\-\_]/)){
+               str=str.replace(/[^A-Z^a-z\d\-\_]/,"");
+             }
+             document.getElementById("room_id").value=str;
+           }
+           function clickManual(){
+             var on_content = document.getElementById("map_manual_option");
+             var off_content = document.getElementById("map_auto_option"); 
+             
+             on_content.classList.remove("display_off");
+             off_content.classList.add("display_off");
+             
+           }
+           function clickAuto(){
+             var on_content = document.getElementById("map_auto_option");
+             var off_content = document.getElementById("map_manual_option");
+             
+             on_content.classList.remove("display_off");
+             off_content.classList.add("display_off");
+             
+           }
+           
+
+           var select_item = 0;
+           document.getElementById("no_item").onclick = function(){
+            select_item = 0;
+            document.getElementById("no_item").classList.add("map_item_button_select");
+            document.getElementById("block_item").classList.remove("map_item_button_select");
+            document.getElementById("hart_item").classList.remove("map_item_button_select");
+            document.getElementById("cool_item").classList.remove("map_item_button_select");
+            document.getElementById("hot_item").classList.remove("map_item_button_select");
+           };
+           document.getElementById("block_item").onclick = function(){
+            select_item = 1;
+            document.getElementById("no_item").classList.remove("map_item_button_select");
+            document.getElementById("block_item").classList.add("map_item_button_select");
+            document.getElementById("hart_item").classList.remove("map_item_button_select");
+            document.getElementById("cool_item").classList.remove("map_item_button_select");
+            document.getElementById("hot_item").classList.remove("map_item_button_select");
+           };
+           document.getElementById("hart_item").onclick = function(){
+            select_item = 2;
+            document.getElementById("no_item").classList.remove("map_item_button_select");
+            document.getElementById("block_item").classList.remove("map_item_button_select");
+            document.getElementById("hart_item").classList.add("map_item_button_select");
+            document.getElementById("cool_item").classList.remove("map_item_button_select");
+            document.getElementById("hot_item").classList.remove("map_item_button_select");
+           };
+           document.getElementById("cool_item").onclick = function(){
+            select_item = 3;
+            document.getElementById("no_item").classList.remove("map_item_button_select");
+            document.getElementById("block_item").classList.remove("map_item_button_select");
+            document.getElementById("hart_item").classList.remove("map_item_button_select");
+            document.getElementById("cool_item").classList.add("map_item_button_select");
+            document.getElementById("hot_item").classList.remove("map_item_button_select");
+           };
+           document.getElementById("hot_item").onclick = function(){
+            select_item = 4;
+            document.getElementById("no_item").classList.remove("map_item_button_select");
+            document.getElementById("block_item").classList.remove("map_item_button_select");
+            document.getElementById("hart_item").classList.remove("map_item_button_select");
+            document.getElementById("cool_item").classList.remove("map_item_button_select");
+            document.getElementById("hot_item").classList.add("map_item_button_select");
+           };
+           
+           
+           var map_data = new Array(17);
+           for(let y = 0; y < 17; y++) {
+             map_data[y] = new Array(15).fill(0);
+           }
+           var cool = {};
+           var hot = {};
+           var tx = Math.floor((map_data[0].length - 1)/2);
+           var ty = Math.floor((map_data.length- 1)/2);
+           
+           
+           function updata_map(){
+            var c = document.getElementById("create_map");
+            while(c.lastChild){
+              c.removeChild(c.lastChild);
+            }
+            var rows=[];
+            var table = document.createElement("table");
+            
+            for(i = 0; i < map_data.length; i++){
+              rows.push(table.insertRow(-1));
+              for(j = 0; j < map_data[0].length; j++){
+                cell=rows[i].insertCell(-1);
+                cell.onclick = function(e){
+                  if((select_item == 3 || select_item == 4) && document.getElementById("manual_symmetry").checked && (this.cellIndex == tx && this.parentNode.rowIndex == ty)){
+                    return;
+                  }
+
+                  if(cool.x){
+                    if(cool.x == this.cellIndex && cool.y == this.parentNode.rowIndex){
+                      cool = {};
+                    }
+                    else if(document.getElementById("manual_symmetry").checked){
+                      if(cool.x == (tx + (tx - this.cellIndex)) && cool.y == (ty + (ty - this.parentNode.rowIndex))){
+                        cool = {};
+                      }
+                    }
+                  }
+                  if(hot.x){
+                    if(hot.x == this.cellIndex && hot.y == this.parentNode.rowIndex){
+                      hot = {};
+                    }
+                    else if(document.getElementById("manual_symmetry").checked){
+                      if(hot.x == (tx + (tx - this.cellIndex)) && hot.y == (ty + (ty - this.parentNode.rowIndex))){
+                        hot = {};
+                      }
+                    }
+                  }
+
+                  if(select_item == 3){
+                    if(cool.x){
+                      map_data[cool.y][cool.x] = 0;
+                    }
+                
+                    cool.x = this.cellIndex;
+                    cool.y = this.parentNode.rowIndex;
+                    
+                    if(hot.x && document.getElementById("manual_symmetry").checked){
+                      map_data[hot.y][hot.x] = 0;
+                      hot.x = tx + (tx - this.cellIndex);
+                      hot.y = ty + (ty - this.parentNode.rowIndex);
+                    }
+                    else if(document.getElementById("manual_symmetry").checked){
+                      hot.x = tx + (tx - this.cellIndex);
+                      hot.y = ty + (ty - this.parentNode.rowIndex);
+                    }
+                    
+                  }
+                  else if(select_item == 4){
+                    if(hot.x){
+                      map_data[hot.y][hot.x] = 0;
+                    }
+                    hot.x = this.cellIndex;
+                    hot.y = this.parentNode.rowIndex;
+
+                    if(cool.x && document.getElementById("manual_symmetry").checked){
+                      map_data[cool.y][cool.x] = 0;
+                      cool.x = tx + (tx - this.cellIndex);
+                      cool.y = ty + (ty - this.parentNode.rowIndex);
+                    }
+                    else if(document.getElementById("manual_symmetry").checked){
+                      cool.x = tx + (tx - this.cellIndex);
+                      cool.y = ty + (ty - this.parentNode.rowIndex);
+                    }
+                  }
+                  
+                  if(document.getElementById("manual_symmetry").checked){
+                    var sx = tx + (tx - this.cellIndex);
+                    var sy = ty + (ty - this.parentNode.rowIndex);
+                    if(select_item == 3){
+                      map_data[this.parentNode.rowIndex][this.cellIndex] = select_item;
+                      map_data[sy][sx] = 4;
+                    }
+                    else if(select_item == 4){
+                      map_data[this.parentNode.rowIndex][this.cellIndex] = select_item;
+                      map_data[sy][sx] = 3;
+                    }
+                    else{
+                      map_data[this.parentNode.rowIndex][this.cellIndex] = select_item;
+                      map_data[sy][sx] = select_item;
+                    }
+                  }
+                  else{
+                    map_data[this.parentNode.rowIndex][this.cellIndex] = select_item;
+                  }
+                  
+                  
+                  updata_map();
+                }
+                if(map_data[i][j]==1){
+                  cell.classList.add("wall_img");
+                }
+                else if(map_data[i][j]==2){
+                  cell.classList.add("hart_img");
+                }
+                else if(map_data[i][j]==3){
+                  cell.classList.add("cool_img");
+                }
+                else if(map_data[i][j]==4){
+                  cell.classList.add("hot_img");
+                }
+              }
+            }
+            document.getElementById("create_map").appendChild(table);
+           }
+           
+           updata_map();
+         </script>
+      </div>
+      
+      <div class="category">
+        <div class="option_content">
+          <div class="option_title">CPUモード</div>
+          <div class="option_radio">
+            <input id="cpu_on" type="radio" name="cpu_option" value="on"><label class="tab_item" for="cpu_on">ON</label>
+            <input id="cpu_off" type="radio" name="cpu_option" value="off" checked><label class="tab_item" for="cpu_off">OFF</label>
+          </div>
+        </div>
+        <div class="option_content">
+          <div class="option_title">CPUターン</div>
+          <div class="option_radio">
+            <input id="cpu_cool" type="radio" name="cpu_turn" value="cool" checked><label class="tab_item" for="cpu_cool">COOL</label>
+            <input id="cpu_hot" type="radio" name="cpu_turn" value="hot"><label class="tab_item" for="cpu_hot">HOT</label>
+          </div>
+        </div>
+        <div class="option_content">
+          <div class="option_title">CPUレベル</div>
+          <div class="option_input">
+            <input id="cpu_level_value" class="option_input_text" type="number" min="0" max="1" value="0">
+          </div>
+        </div>
+      </div>
+      
+      <div id="create_config" class="create_config_button">設定ファイル生成</div>
+      <script>
+        document.getElementById("create_config").onclick = function(){
+          var result_json = {};
+          var server_name = document.getElementById("name").value;
+          if(server_name.length){
+            result_json.name = server_name;
+          }
+          else{
+            window.alert("サーバー名を入力してください");
+            return;
+          }
+
+          var server_room_id = document.getElementById("room_id").value;
+          if(server_room_id.match(/^[A-Za-z0-9_-]*$/) && server_room_id.length){
+            result_json.room_id = server_room_id;
+          }
+          else{
+            window.alert("サーバーIDを正しく入力してください");
+            return;
+          }
+
+          result_json.map_size_x = 15;
+          result_json.map_size_y = 17;
+
+          result_json.cool = {};
+          result_json.hot = {};
+
+          result_json.cool.status = false;
+          result_json.cool.turn = false;
+          result_json.hot.status = false;
+          result_json.hot.turn = false;
+
+          if(document.getElementById("manual").checked){
+            if(cool.x && hot.x){
+              result_json.map_data = map_data;
+              result_json.cool.x = cool.x;
+              result_json.cool.y = cool.y;
+              result_json.hot.x = hot.x;
+              result_json.hot.y = hot.y;
+            }
+            else{
+              window.alert("COOLまたはHOTが存在しません");
+              return;
+            }
+          }
+          else{
+            result_json.map_data = [];
+            if(document.getElementById("symmetry").checked){
+              result_json.auto_symmetry = true;
+            }
+            else{
+              result_json.auto_symmetry = false;
+            }
+
+            var auto_block = Number(document.getElementById("block_number").value);
+            if(auto_block%2 == 0 && auto_block >= 0){
+              result_json.auto_block = auto_block;
+            }
+            else{
+              window.alert("ブロック数の値が不正です");
+              return;
+            }
+            var auto_point = Number(document.getElementById("item_number").value);
+            if(auto_point%2 == 1 && auto_point > 0){
+              result_json.auto_point = auto_point;
+            }
+            else{
+              window.alert("アイテム数の値が不正です");
+              return;
+            }
+          }
+          result_json.turn = 100;
+
+          if(document.getElementById("cpu_on").checked){
+            result_json.cpu = {};
+            if(document.getElementById("cpu_cool").checked){
+              result_json.cpu.turn = "cool";
+            }
+            else{
+              result_json.cpu.turn = "hot";
+            }
+
+            var cpu_level = Number(document.getElementById("cpu_level_value").value);
+            if(cpu_level >= 0 && cpu_level <= 1){
+              result_json.cpu.level = cpu_level;
+            }
+            else{
+              window.alert("CPUレベルの値が不正です");
+              return;
+            }
+          }
+
+          download(result_json);
+        }
+
+        function download(dl_data){
+          var userAgent = window.navigator.userAgent.toLowerCase();
+          var webbrowser_check = 0;
+          
+          if(userAgent.indexOf('msie') != -1 || userAgent.indexOf('trident') != -1){
+            webbrowser_check = 1;
+          }
+          else if(userAgent.indexOf('edge') != -1) {
+            webbrowser_check = 1;
+          }
+          else if(userAgent.indexOf('chrome') != -1) {
+            webbrowser_check = 1;
+          }
+          else if(userAgent.indexOf('safari') != -1) {
+            webbrowser_check = 0;
+          }
+          else if(userAgent.indexOf('firefox') != -1) {
+            webbrowser_check = 1;
+          }
+          else if(userAgent.indexOf('opera') != -1) {
+            webbrowser_check = 1;
+          }
+          else {
+            webbrowser_check = 0;
+          }
+          
+          if(webbrowser_check == 0){
+            window.alert("ご利用のブラウザは本機能を使用できません");
+          }
+          else{
+            var blob = new Blob([JSON.stringify(dl_data)],{type:"application/json"}); 
+            var file_name = dl_data.room_id; 
+            if(window.navigator.msSaveBlob)
+            {
+                // IE
+                window.navigator.msSaveBlob(blob, file_name + ".json");
+            } else {
+                // another
+                var a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.target = '_blank';
+                a.download = file_name + ".json";
+                a.click();
+            }
+          }
+        }
+      </script>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+document.getElementById("map_manual_option").checked
